@@ -181,6 +181,161 @@
     figureValues.forEach(function (el) { io.observe(el); });
   }
 
+  // ===== Mobile: turn the demo form into a "Zostaw kontakt" button + popup =====
+  // On phones HubSpot's form crams 7 white fields into the page and breaks the
+  // dark theme. Solution: hide the form, show a button, on click open a
+  // full-screen popup with the form inside.
+  function setupMobileFormPopup() {
+    if (window.innerWidth > 768) return;
+    if (document.querySelector('.apf-form-popup')) return; // already set up
+
+    var formWrap = document.querySelector('.demo-form-wrap');
+    var demoGrid = document.querySelector('.demo-grid');
+    if (!formWrap || !demoGrid) return;
+
+    // Insert popup CSS once
+    if (!document.getElementById('apf-popup-css')) {
+      var st = document.createElement('style');
+      st.id = 'apf-popup-css';
+      st.textContent = [
+        '@media (max-width: 768px) {',
+        '  .demo-form-wrap { display: none !important; }',
+        '  .demo-open-form-mobile {',
+        '    display: inline-flex !important; align-items: center; justify-content: center; gap: 8px;',
+        '    width: 100% !important; margin-top: 24px;',
+        '    background: #6FE39D !important; color: #052821 !important;',
+        '    border: none !important; border-radius: 999px !important;',
+        '    padding: 16px 28px !important; font: 700 16px Inter, system-ui, sans-serif;',
+        '    cursor: pointer;',
+        '    box-shadow: 0 0 0 1px rgba(111,227,157,0.30), 0 8px 28px rgba(111,227,157,0.40), 0 0 36px rgba(111,227,157,0.30);',
+        '  }',
+        '  .apf-form-popup {',
+        '    position: fixed; inset: 0; z-index: 99999;',
+        '    background: rgba(15, 15, 15, 0.92);',
+        '    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);',
+        '    display: none; overflow-y: auto; -webkit-overflow-scrolling: touch;',
+        '  }',
+        '  body.apf-form-open { overflow: hidden; }',
+        '  body.apf-form-open .apf-form-popup { display: block; }',
+        '  .apf-form-popup__inner {',
+        '    background: #231F20; min-height: 100vh; padding: 64px 22px 40px;',
+        '    box-sizing: border-box;',
+        '  }',
+        '  .apf-form-popup__close {',
+        '    position: fixed; top: 16px; right: 16px;',
+        '    width: 40px; height: 40px; border-radius: 50%;',
+        '    background: rgba(255,255,255,0.10); color: #FFF;',
+        '    border: 1px solid rgba(255,255,255,0.18);',
+        '    display: flex; align-items: center; justify-content: center;',
+        '    font-size: 22px; line-height: 1; cursor: pointer; z-index: 2;',
+        '  }',
+        '  .apf-form-popup__title { font: 700 22px Manrope, system-ui, sans-serif; color: #FFF; margin: 0 0 6px; letter-spacing: -0.01em; }',
+        '  .apf-form-popup__sub { font: 400 14px Inter, system-ui, sans-serif; color: rgba(255,255,255,0.65); margin: 0 0 22px; }',
+        '}',
+        '@media (min-width: 769px) {',
+        '  .demo-open-form-mobile { display: none !important; }',
+        '}'
+      ].join('\n');
+      document.head.appendChild(st);
+    }
+
+    // Build the popup
+    var overlay = document.createElement('div');
+    overlay.className = 'apf-form-popup';
+    var inner = document.createElement('div');
+    inner.className = 'apf-form-popup__inner';
+    var close = document.createElement('button');
+    close.className = 'apf-form-popup__close';
+    close.setAttribute('aria-label', 'Zamknij');
+    close.innerHTML = '&times;';
+    var title = document.createElement('div');
+    title.className = 'apf-form-popup__title';
+    title.textContent = 'Poproś o spersonalizowaną ofertę';
+    var sub = document.createElement('div');
+    sub.className = 'apf-form-popup__sub';
+    sub.textContent = 'Odpowiemy w ciągu jednego dnia roboczego.';
+
+    inner.appendChild(title);
+    inner.appendChild(sub);
+
+    // Move the entire #hubspotForm into the popup body
+    var formContainer = document.getElementById('hubspotForm');
+    if (formContainer) inner.appendChild(formContainer);
+
+    overlay.appendChild(close);
+    overlay.appendChild(inner);
+    document.body.appendChild(overlay);
+
+    // Create the "Open form" button in the left column where the form was
+    var leftCol = demoGrid.firstElementChild;
+    var openBtn = document.createElement('button');
+    openBtn.type = 'button';
+    openBtn.className = 'demo-open-form-mobile';
+    openBtn.innerHTML = 'Zostaw kontakt &nbsp;→';
+    leftCol.appendChild(openBtn);
+
+    openBtn.addEventListener('click', function () {
+      document.body.classList.add('apf-form-open');
+    });
+    close.addEventListener('click', function () {
+      document.body.classList.remove('apf-form-open');
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') document.body.classList.remove('apf-form-open');
+    });
+  }
+  // Run once now and again after delay (in case the form renders late)
+  setupMobileFormPopup();
+  setTimeout(setupMobileFormPopup, 1200);
+
+  // ===== HubSpot form: inject our dark-theme overrides AFTER HubSpot loads =====
+  // HubSpot ships its own CSS that wins over our linked stylesheet by source order.
+  // We mount a <style> tag at the end of <body> *after* HubSpot renders the form,
+  // so our rules load last and take precedence.
+  function injectHubspotStyles() {
+    if (document.getElementById('apf-hubspot-override')) return;
+    var s = document.createElement('style');
+    s.id = 'apf-hubspot-override';
+    s.textContent = [
+      '#hubspotForm, #hubspotForm form, #hubspotForm .hs-form { max-width:100% !important; width:100% !important; box-sizing:border-box !important; color:#FFFFFF !important; }',
+      '#hubspotForm label, #hubspotForm .hs-form-field > label, #hubspotForm .hs-form-field label { color:#FFFFFF !important; font-weight:600 !important; font-size:14px !important; display:block !important; margin-bottom:6px !important; }',
+      '#hubspotForm .hs-form-field { width:100% !important; margin-bottom:14px !important; }',
+      '#hubspotForm .input { width:100% !important; margin:0 !important; }',
+      '#hubspotForm input.hs-input, #hubspotForm textarea.hs-input, #hubspotForm select.hs-input, #hubspotForm .hs-input { width:100% !important; max-width:100% !important; box-sizing:border-box !important; color:#FFFFFF !important; background:rgba(255,255,255,0.05) !important; border:1px solid rgba(255,255,255,0.15) !important; border-radius:10px !important; padding:12px 14px !important; font-size:15px !important; display:block !important; }',
+      '#hubspotForm input.hs-input:focus, #hubspotForm textarea.hs-input:focus, #hubspotForm select.hs-input:focus { border-color:rgba(111,227,157,0.6) !important; outline:none !important; box-shadow:0 0 0 3px rgba(111,227,157,0.15) !important; }',
+      '#hubspotForm input.hs-input::placeholder, #hubspotForm textarea.hs-input::placeholder { color:rgba(255,255,255,0.45) !important; }',
+      '#hubspotForm select.hs-input option { color:#111 !important; }',
+      '#hubspotForm fieldset { max-width:100% !important; width:100% !important; border:0 !important; padding:0 !important; margin:0 !important; }',
+      '#hubspotForm fieldset.form-columns-2 .hs-form-field, #hubspotForm fieldset.form-columns-3 .hs-form-field { width:100% !important; float:none !important; }',
+      '#hubspotForm .hs-button, #hubspotForm input[type="submit"] { background:#6FE39D !important; color:#052821 !important; border:none !important; border-radius:999px !important; padding:13px 26px !important; font-weight:700 !important; font-size:15px !important; cursor:pointer !important; transition:background 0.2s, transform 0.15s !important; box-shadow:0 6px 20px rgba(111,227,157,0.25) !important; width:100% !important; max-width:100% !important; }',
+      '#hubspotForm .hs-button:hover, #hubspotForm input[type="submit"]:hover { background:#8AEDB1 !important; transform:translateY(-1px) !important; }',
+      '#hubspotForm .hs_submit, #hubspotForm .actions { width:100% !important; margin-top:8px !important; }',
+      '#hubspotForm .hs-richtext, #hubspotForm .hs-richtext p, #hubspotForm legend, #hubspotForm .hs-field-desc, #hubspotForm .legal-consent-container { color:rgba(255,255,255,0.65) !important; font-size:13px !important; width:100% !important; max-width:100% !important; }',
+      '#hubspotForm .hs-error-msg, #hubspotForm .hs-error-msgs label { color:#FF9B9B !important; }',
+      '#hubspotForm input[type="checkbox"], #hubspotForm input[type="radio"] { width:auto !important; margin-right:6px !important; accent-color:#6FE39D; }'
+    ].join('\n');
+    document.body.appendChild(s);
+  }
+  // Run on load + observe DOM in case HubSpot renders async (it does)
+  if (document.getElementById('hubspotForm')) {
+    injectHubspotStyles();
+    setTimeout(injectHubspotStyles, 500);
+    setTimeout(injectHubspotStyles, 1500);
+    setTimeout(injectHubspotStyles, 3000);
+    var mo = new MutationObserver(function () {
+      var f = document.querySelector('#hubspotForm form, #hubspotForm .hs-form');
+      if (f) {
+        injectHubspotStyles();
+        // bump our <style> to the very end of body so it wins the cascade
+        var s = document.getElementById('apf-hubspot-override');
+        if (s && s.parentNode === document.body && s !== document.body.lastChild) {
+          document.body.appendChild(s);
+        }
+      }
+    });
+    mo.observe(document.getElementById('hubspotForm'), { childList: true, subtree: true });
+  }
+
   // ===== Integration swap — cycle logos every 2.4s =====
   var swapCard = document.querySelector('.iswap-card--cycle');
   if (swapCard) {
