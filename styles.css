@@ -5216,6 +5216,91 @@ section.demo-neon .caption {
   color: #FF9B9B !important;
 }
 
+/* === v26 — HubSpot form: bulletproof mobile fixes ===
+   HubSpot injects its own widths, floats and inline-block layouts that
+   break on narrow viewports. Override everything to a clean stacked
+   column where each field takes 100% of the container. */
+#hubspotForm,
+#hubspotForm form,
+#hubspotForm .hs-form {
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+#hubspotForm .hs-form-field {
+  width: 100% !important;
+  margin-bottom: 14px !important;
+}
+#hubspotForm .input {
+  width: 100% !important;
+  margin: 0 !important;
+}
+#hubspotForm .hs-input {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+/* HubSpot uses fieldset.form-columns-2 for 2-col rows — force single column */
+#hubspotForm fieldset {
+  max-width: 100% !important;
+  width: 100% !important;
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+#hubspotForm fieldset.form-columns-2 .hs-form-field,
+#hubspotForm fieldset.form-columns-3 .hs-form-field {
+  width: 100% !important;
+  float: none !important;
+}
+#hubspotForm .hs_submit,
+#hubspotForm .actions {
+  width: 100% !important;
+  margin-top: 8px !important;
+}
+#hubspotForm .hs-button,
+#hubspotForm input[type="submit"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+/* GDPR / legal text wraps inside a small column on HubSpot by default — fix */
+#hubspotForm .legal-consent-container,
+#hubspotForm .hs-richtext {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Specifically mobile: tighter padding so form doesn't break out of demo-band */
+@media (max-width: 768px) {
+  section.demo-neon .demo-band {
+    padding: 24px !important;
+    border-radius: 18px !important;
+  }
+  .demo-form-wrap {
+    padding: 20px !important;
+    border-radius: 14px !important;
+  }
+  #hubspotForm .hs-input {
+    padding: 11px 12px !important;
+    font-size: 14px !important;
+  }
+  #hubspotForm label {
+    font-size: 13px !important;
+  }
+  #hubspotForm .hs-button {
+    padding: 14px 18px !important;
+    font-size: 14px !important;
+  }
+  /* Team avatars: stack vertically on phone (currently flex-wrap might keep them in row at narrow widths) */
+  .demo-team__people {
+    flex-direction: column !important;
+    gap: 14px !important;
+    align-items: flex-start !important;
+  }
+}
+
 @media (max-width: 560px) {
   .demo-team__people { gap: 16px; }
   .demo-team__avatar { width: 44px; height: 44px; }
