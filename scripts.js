@@ -364,4 +364,159 @@
       }, 2400);
     }
   }
+
+  // ===== Tilda cookie banner: hunt-and-style by content =====
+  // The Tilda cookie banner sometimes uses non-standard classes that our CSS
+  // can't catch. This finder locates ANY element containing the cookie text
+  // and applies brand styling directly (inline + via a unique class).
+  function styleCookieBanner() {
+    if (document.querySelector('.apf-cookie-styled')) return true;
+
+    // Find candidates: elements that contain Polish cookie-consent phrases
+    // and are themselves the OUTER banner container (not a deeply-nested span).
+    var phrase = 'plików cookie';
+    var candidates = [];
+    var allDivs = document.querySelectorAll('div, section, aside');
+    for (var i = 0; i < allDivs.length; i++) {
+      var d = allDivs[i];
+      var t = d.textContent || '';
+      if (t.indexOf(phrase) === -1) continue;
+      // Reject if any child div also contains the phrase (we want the outermost banner)
+      var hasChildWithPhrase = false;
+      var childDivs = d.querySelectorAll('div, section, aside');
+      for (var j = 0; j < childDivs.length; j++) {
+        if ((childDivs[j].textContent || '').indexOf(phrase) !== -1) {
+          // The phrase exists in a sub-element AND the sub-element is not just the leaf
+          if (childDivs[j].querySelectorAll('div').length > 0) {
+            hasChildWithPhrase = true;
+            break;
+          }
+        }
+      }
+      if (hasChildWithPhrase) continue;
+      // Reject body/html
+      if (d.tagName === 'BODY' || d.tagName === 'HTML') continue;
+      candidates.push(d);
+    }
+    if (candidates.length === 0) return false;
+
+    // Walk UP from a leaf candidate to find the banner root (fixed/sticky/popup)
+    var banner = candidates[0];
+    var hop = banner;
+    while (hop && hop !== document.body) {
+      var cs = window.getComputedStyle(hop);
+      if (cs.position === 'fixed' || cs.position === 'sticky' ||
+          /cookie|popup|dialog|consent/i.test(hop.className || '') ||
+          /cookie|popup|dialog|consent/i.test(hop.id || '')) {
+        banner = hop;
+        break;
+      }
+      hop = hop.parentElement;
+    }
+    // If still didn't find a fixed/sticky parent, try one level up to grab a wrapper
+    if (banner === candidates[0] && banner.parentElement) {
+      banner = banner.parentElement;
+    }
+
+    banner.classList.add('apf-cookie-styled');
+
+    // Force fixed positioning at bottom + high z-index + dark theme
+    banner.style.cssText += [
+      'position: fixed !important',
+      'left: 0 !important',
+      'right: 0 !important',
+      'bottom: 0 !important',
+      'top: auto !important',
+      'z-index: 99999 !important',
+      'background: rgba(35, 31, 32, 0.96) !important',
+      'background-color: rgba(35, 31, 32, 0.96) !important',
+      'color: rgba(255, 255, 255, 0.85) !important',
+      'border-top: 1px solid rgba(255, 255, 255, 0.10) !important',
+      'border-radius: 16px 16px 0 0 !important',
+      '-webkit-backdrop-filter: blur(12px)',
+      'backdrop-filter: blur(12px)',
+      'box-shadow: 0 -8px 32px rgba(0,0,0,0.45) !important',
+      'padding: 18px 24px !important',
+      'max-height: 50vh !important',
+      'overflow-y: auto !important',
+      'font-family: Inter, system-ui, sans-serif !important'
+    ].join('; ') + ';';
+
+    // Recolor inner text/links/buttons by walking children
+    var walker = document.createTreeWalker(banner, NodeFilter.SHOW_ELEMENT, null);
+    var node;
+    while ((node = walker.nextNode())) {
+      var tag = node.tagName;
+      var classes = (node.className && node.className.baseVal !== undefined)
+        ? node.className.baseVal : (node.className || '');
+      var txt = (node.textContent || '').trim().toLowerCase();
+
+      // Text nodes (p, span, div with text only)
+      if (tag === 'P' || tag === 'SPAN' || tag === 'DIV' || tag === 'STRONG' || tag === 'B') {
+        node.style.setProperty('color', 'rgba(255, 255, 255, 0.78)', 'important');
+        node.style.setProperty('background', 'transparent', 'important');
+        node.style.setProperty('background-color', 'transparent', 'important');
+      }
+      // Links — lime accent
+      if (tag === 'A') {
+        node.style.setProperty('color', '#6FE39D', 'important');
+        node.style.setProperty('text-decoration', 'underline', 'important');
+        node.style.setProperty('text-decoration-color', 'rgba(111,227,157,0.4)', 'important');
+      }
+      // Buttons — primary vs secondary by text content
+      if (tag === 'BUTTON' || (tag === 'A' && /btn|button/i.test(classes))) {
+        var isPrimary = /zaakceptuj|akceptuj|accept|zgadzam|wszystkie/.test(txt);
+        var isDecline = /odrzuć|odrzuc|reject|decline|nie zgadzam/.test(txt);
+        var isSettings = /ustawieni|settings|customize|preferenc/.test(txt);
+
+        if (isPrimary) {
+          node.style.cssText += [
+            'background: #6FE39D !important',
+            'background-color: #6FE39D !important',
+            'color: #052821 !important',
+            'border: none !important',
+            'border-radius: 999px !important',
+            'padding: 10px 22px !important',
+            'font: 700 14px Inter, system-ui, sans-serif !important',
+            'box-shadow: 0 0 0 1px rgba(111,227,157,0.30), 0 6px 22px rgba(111,227,157,0.35) !important',
+            'cursor: pointer !important',
+            'margin: 4px !important'
+          ].join('; ') + ';';
+        } else if (isDecline || isSettings) {
+          node.style.cssText += [
+            'background: transparent !important',
+            'background-color: transparent !important',
+            'color: rgba(255,255,255,0.85) !important',
+            'border: 1px solid rgba(255,255,255,0.22) !important',
+            'border-radius: 999px !important',
+            'padding: 9px 20px !important',
+            'font: 600 14px Inter, system-ui, sans-serif !important',
+            'cursor: pointer !important',
+            'margin: 4px !important'
+          ].join('; ') + ';';
+        }
+      }
+    }
+
+    // Mobile: smaller padding
+    if (window.innerWidth <= 768) {
+      banner.style.setProperty('padding', '14px 16px', 'important');
+      banner.style.setProperty('font-size', '13px', 'important');
+    }
+
+    return true;
+  }
+
+  // Try several times — Tilda may inject the banner async after the page renders
+  styleCookieBanner();
+  setTimeout(styleCookieBanner, 500);
+  setTimeout(styleCookieBanner, 1500);
+  setTimeout(styleCookieBanner, 3000);
+  setTimeout(styleCookieBanner, 5000);
+
+  // Also watch for late insertion (e.g. user scrolls down or banner re-mounts)
+  var cookieMo = new MutationObserver(function () {
+    if (!document.querySelector('.apf-cookie-styled')) styleCookieBanner();
+  });
+  cookieMo.observe(document.body, { childList: true, subtree: true });
 })();
