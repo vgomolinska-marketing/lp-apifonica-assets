@@ -5398,3 +5398,161 @@ section.demo-neon .caption {
 .nav-label.nav-label--lc {
   text-transform: none !important;
 }
+
+/* ============================================================
+   === v27 — TILDA COOKIE BOT: dark-theme override
+   Tilda's stock cookie banner is white + blue buttons, which
+   smashes through our warm-dark canvas. We restyle ALL known
+   Tilda cookie banner variants (legacy t-cookies, modern
+   CookieBot, custom popups) to match the brand.
+   ============================================================ */
+
+/* --- Container --------------------------------------------- */
+.t-cookies,
+.t-cookies__wrapper,
+.t-cookies-popup,
+.t794,
+.t794 .t794__container,
+#CybotCookiebotDialog,
+[class*="CookiebotDialog"],
+.t-popup__cookies {
+  background: rgba(35, 31, 32, 0.96) !important;
+  background-color: rgba(35, 31, 32, 0.96) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.10) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35) !important;
+  border-radius: 16px 16px 0 0 !important;
+}
+
+/* --- Body text --------------------------------------------- */
+.t-cookies__text,
+.t-cookies__cookies-text,
+.t-cookies p,
+.t-cookies span,
+.t-cookies a,
+.t794 .t-descr,
+.t794 .t-text,
+#CybotCookiebotDialogBody,
+#CybotCookiebotDialogBodyContentText,
+#CybotCookiebotDialogBodyContentTitle,
+[class*="CookiebotDialogBodyContentText"] {
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-family: Inter, system-ui, sans-serif !important;
+}
+
+#CybotCookiebotDialogBodyContentTitle {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+/* --- Links inside the banner (e.g. "Ustawienia plików cookie") --- */
+.t-cookies a,
+.t-cookies__text a,
+.t794 a,
+#CybotCookiebotDialog a,
+[class*="CookiebotDialog"] a {
+  color: #6FE39D !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(111, 227, 157, 0.4) !important;
+}
+.t-cookies a:hover,
+[class*="CookiebotDialog"] a:hover {
+  color: #8AEDB1 !important;
+  text-decoration-color: rgba(111, 227, 157, 0.8) !important;
+}
+
+/* --- Primary "Zaakceptuj" button: lime ---------------------- */
+.t-cookies__btn,
+.t-cookies__btn--accept,
+.t-cookies__accept-btn,
+.t-popup__cookies-btn,
+.t794 .t-btn,
+#CybotCookiebotDialogBodyLevelButtonAccept,
+#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll,
+#CybotCookiebotDialogBodyButtonAccept,
+[id*="CookiebotDialogBodyLevelButtonAccept"] {
+  background: #6FE39D !important;
+  background-color: #6FE39D !important;
+  color: #052821 !important;
+  border: none !important;
+  border-radius: 999px !important;
+  padding: 10px 22px !important;
+  font: 700 14px Inter, system-ui, sans-serif !important;
+  letter-spacing: 0.01em !important;
+  box-shadow: 0 0 0 1px rgba(111, 227, 157, 0.30),
+              0 6px 22px rgba(111, 227, 157, 0.35) !important;
+  transition: background 0.2s, transform 0.15s !important;
+  cursor: pointer !important;
+}
+.t-cookies__btn:hover,
+.t-cookies__btn--accept:hover,
+#CybotCookiebotDialogBodyLevelButtonAccept:hover,
+[id*="CookiebotDialogBodyLevelButtonAccept"]:hover {
+  background: #8AEDB1 !important;
+  background-color: #8AEDB1 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* --- Secondary "Odrzuć" / settings buttons: outline -------- */
+.t-cookies__btn--decline,
+.t-cookies__decline-btn,
+.t-cookies__settings-btn,
+#CybotCookiebotDialogBodyLevelButtonReject,
+#CybotCookiebotDialogBodyLevelButtonCustomize,
+#CybotCookiebotDialogBodyButtonDecline,
+[id*="CookiebotDialogBodyLevelButtonReject"],
+[id*="CookiebotDialogBodyLevelButtonCustomize"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 999px !important;
+  padding: 9px 20px !important;
+  font: 600 14px Inter, system-ui, sans-serif !important;
+  cursor: pointer !important;
+  transition: background 0.2s, border-color 0.2s !important;
+}
+.t-cookies__btn--decline:hover,
+#CybotCookiebotDialogBodyLevelButtonReject:hover,
+[id*="CookiebotDialogBodyLevelButtonReject"]:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+/* --- Close icon ------------------------------------------- */
+.t-cookies__close,
+.t-cookies__close-icon,
+#CybotCookiebotDialogBodyButtonClose {
+  color: rgba(255, 255, 255, 0.7) !important;
+  fill: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* --- z-index: keep banner above page content but below modals --- */
+.t-cookies,
+.t-cookies__wrapper,
+#CybotCookiebotDialog,
+[class*="CookiebotDialog"] {
+  z-index: 9998 !important;
+}
+
+/* --- Mobile: smaller padding so it doesn't eat the screen --- */
+@media (max-width: 768px) {
+  .t-cookies,
+  #CybotCookiebotDialog,
+  [class*="CookiebotDialog"] {
+    padding: 14px 16px !important;
+    font-size: 13px !important;
+    border-radius: 14px 14px 0 0 !important;
+  }
+  .t-cookies__btn,
+  .t-cookies__btn--accept,
+  .t-cookies__btn--decline,
+  #CybotCookiebotDialogBodyLevelButtonAccept,
+  #CybotCookiebotDialogBodyLevelButtonReject,
+  #CybotCookiebotDialogBodyLevelButtonCustomize {
+    padding: 9px 16px !important;
+    font-size: 13px !important;
+  }
+}
