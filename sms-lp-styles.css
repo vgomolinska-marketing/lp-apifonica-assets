@@ -1,5 +1,5 @@
 :root{
-  /* Brand — SMS amber (replaces lime) */
+  /* Brand вЂ” SMS amber (replaces lime) */
   --primary:#F4B44C;
   --primary-active:#F8C56E;
   --primary-neutral:#E8A63A;
@@ -76,6 +76,8 @@ h1,h2,h3,h4{font-family:var(--font-display);color:var(--ink);font-weight:600;lin
 .btn:hover .btn-arw{transform:translateX(4px)}
 .btn-secondary{background:transparent;color:var(--ink);border-color:var(--hairline)}
 .btn-secondary:hover{border-color:var(--primary-glow);transform:translateY(-1px)}
+.section-light .btn-secondary{color:#231F20;border-color:rgba(0,0,0,0.22);background:rgba(255,255,255,0.55)}
+.section-light .btn-secondary:hover{color:#231F20;border-color:var(--primary-neutral);background:#fff;transform:translateY(-1px)}
 
 /* NAV */
 .nav{position:sticky;top:0;z-index:100;background:rgba(35,31,32,0.82);backdrop-filter:blur(14px);
@@ -254,7 +256,7 @@ h1,h2,h3,h4{font-family:var(--font-display);color:var(--ink);font-weight:600;lin
 .case .stats b{font-family:var(--font-display);color:#fff;font-size:20px;font-weight:600}
 .case .stats small{font-size:12px;color:var(--mute);margin-top:3px}
 
-/* Light-section variants — unify all cards on light backgrounds */
+/* Light-section variants вЂ” unify all cards on light backgrounds */
 .section-light .case{background:#fff;border:1px solid rgba(0,0,0,0.08);box-shadow:0 6px 20px rgba(0,0,0,0.05)}
 .section-light .case:hover{border-color:var(--primary-neutral);box-shadow:0 16px 36px rgba(0,0,0,0.10)}
 .section-light .case .co{color:#231F20}
@@ -280,7 +282,7 @@ h1,h2,h3,h4{font-family:var(--font-display);color:var(--ink);font-weight:600;lin
 .section-light .fit-result{background:#F7F5F2;border-color:rgba(0,0,0,0.08)}
 .section-light .fit-result p{color:rgba(35,31,32,0.66)}
 
-/* Hover glow per block — dark sections glow light, light sections glow dark */
+/* Hover glow per block вЂ” dark sections glow light, light sections glow dark */
 .way,.pf,.incl,.faq-item{transition:background .25s ease,transform .25s ease,box-shadow .25s ease,border-color .25s ease}
 .way h3,.way .lead,.way li,.pf h4,.pf p,.pf li,.incl h4,.incl li,.incl li b{transition:color .25s ease}
 .price-card{transition:transform .22s ease,box-shadow .22s ease}
@@ -339,7 +341,7 @@ h1,h2,h3,h4{font-family:var(--font-display);color:var(--ink);font-weight:600;lin
 .pillar h4{font-size:16px;margin-bottom:14px;line-height:1.3}
 .pillar ul{list-style:none;display:flex;flex-direction:column;gap:9px}
 .pillar li{padding-left:20px;position:relative;font-size:13.5px;color:var(--body)}
-.pillar li::before{content:"✓";position:absolute;left:0;color:var(--primary);font-weight:700}
+.pillar li::before{content:"вњ“";position:absolute;left:0;color:var(--primary);font-weight:700}
 .cert-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:36px}
 .cert-pill{border:1px solid var(--hairline);border-radius:999px;padding:9px 16px;font-size:13px;
   color:var(--ink);background:var(--canvas-softer)}
@@ -365,7 +367,7 @@ h1,h2,h3,h4{font-family:var(--font-display);color:var(--ink);font-weight:600;lin
 .pf p{font-size:14px;color:var(--body);margin-bottom:14px}
 .pf ul{list-style:none;display:flex;flex-direction:column;gap:8px}
 .pf li{padding-left:20px;position:relative;font-size:13.5px;color:var(--body)}
-.pf li::before{content:"→";position:absolute;left:0;color:var(--primary)}
+.pf li::before{content:"в†’";position:absolute;left:0;color:var(--primary)}
 
 /* Fit check quiz */
 .fit{background:var(--card);border:1px solid var(--hairline);border-radius:24px;padding:38px;max-width:760px;margin:0 auto}
@@ -397,7 +399,7 @@ h1,h2,h3,h4{font-family:var(--font-display);color:var(--ink);font-weight:600;lin
 .incl h4{font-size:18px;margin-bottom:18px}
 .incl ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .incl li{padding-left:24px;position:relative;font-size:14px;color:var(--body)}
-.incl li::before{content:"✓";position:absolute;left:0;color:var(--primary);font-weight:700}
+.incl li::before{content:"вњ“";position:absolute;left:0;color:var(--primary);font-weight:700}
 .incl li b{color:var(--ink);font-weight:600}
 
 /* FAQ */
@@ -498,6 +500,27 @@ h1,h2,h3,h4{font-family:var(--font-display);color:var(--ink);font-weight:600;lin
 .btn-dark{background:#231F20;color:#fff;border-color:#231F20}
 .btn-dark:hover{background:#000;transform:translateY(-1px)}
 .platform-cards{margin-top:8px}
+/* Rich CTA block */
+.cta-rich{background:#F3F2F1}
+.cta-card{position:relative;overflow:hidden;background:var(--canvas);border-radius:32px;
+  padding:clamp(28px,5vw,64px);box-shadow:0 30px 70px rgba(0,0,0,0.20)}
+.cta-card::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 50% 60% at 8% 18%,var(--primary-glow) 0%,transparent 55%),
+            radial-gradient(ellipse 60% 70% at 102% 92%,var(--secondary-glow) 0%,transparent 55%)}
+.cta-rich-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:56px;align-items:center;position:relative;z-index:1}
+.cta-rich-copy h2{margin:16px 0 28px}
+.cta-benefits{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:20px 24px;margin-bottom:34px}
+.cta-benefits li{display:flex;gap:13px;align-items:flex-start;font-size:15px;color:var(--ink);line-height:1.4}
+.cta-benefits .bic{flex:0 0 42px;width:42px;height:42px;border-radius:12px;background:var(--primary-pale);
+  color:var(--primary);display:grid;place-items:center}
+.cta-benefits .bic svg{width:21px;height:21px}
+.cta-rich-btns{display:flex;gap:14px;flex-wrap:wrap}
+.cta-rich-img img{width:100%;border-radius:16px;border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 24px 60px rgba(255,255,255,0.14),0 0 50px rgba(244,180,76,0.18),0 0 0 1px rgba(255,255,255,0.06)}
+@media(max-width:900px){
+  .cta-rich-grid{grid-template-columns:1fr;gap:36px}
+  .cta-benefits{grid-template-columns:1fr}
+}
 .footer-cols--single{grid-template-columns:1fr}
 .footer-cols--single p{max-width:520px}
 .brand-logo{height:15px;width:auto;display:block}
